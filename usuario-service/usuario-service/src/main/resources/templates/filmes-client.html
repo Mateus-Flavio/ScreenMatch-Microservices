@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Filmes do outro serviço</title>
+</head>
+<body>
+
+<h1>Filmes vindos do filmes-service</h1>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Descrição</th>
+        <th>Gênero</th>
+        <th>Ano</th>
+    </tr>
+
+    <tr th:each="filme : ${filmes}">
+        <td th:text="${filme.id}"></td>
+        <td th:text="${filme.titulo}"></td>
+        <td th:text="${filme.descricao}"></td>
+        <td th:text="${filme.genero}"></td>
+        <td th:text="${filme.ano}"></td>
+    </tr>
+</table>
+
+<a href="/home">Voltar</a>
+
+</body>
+</html>

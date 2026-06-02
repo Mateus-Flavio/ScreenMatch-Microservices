@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Esqueci a Senha - ScreenMatch</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container" style="max-width: 400px; margin-top: 50px;">
+    <h2 class="text-center">Esqueci minha senha</h2>
+    <form th:action="@{/esqueci-senha}" method="post">
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" class="form-control" name="email" placeholder="Digite seu email" required>
+        </div>
+        <button type="submit" class="btn btn-warning btn-block">Enviar</button>
+        <div class="text-center" style="margin-top: 10px;">
+            <a th:href="@{/login}">Voltar ao login</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -253,6 +253,6 @@ Mateus Flávio Herculano de Farias
 GitHub:
 https://github.com/Mateus-Flavio
 
-LinkedIn:
+LinkedIn:https://www.linkedin.com/in/mateus-fl%C3%A1vio-20738a298/
 (adicionar seu LinkedIn aqui)
 

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @Controller
 @RequestMapping("/filmes")
 public class FilmeController {
@@ -19,21 +20,27 @@ public class FilmeController {
     }
 
     @GetMapping
-    public String listar(Model model) {
-        model.addAttribute("filmes", service.listar());
+    public String listar(@RequestParam Long usuarioId, Model model) {
+        model.addAttribute("filmes", service.listarPorUsuario(usuarioId));
+        model.addAttribute("usuarioId", usuarioId);
         return "filmes";
     }
 
     @GetMapping("/novo")
-    public String novoFilme(Model model) {
-        model.addAttribute("filme", new Filme());
+    public String novoFilme(@RequestParam Long usuarioId, Model model) {
+        Filme filme = new Filme();
+        filme.setUsuarioId(usuarioId);
+
+        model.addAttribute("filme", filme);
+        model.addAttribute("usuarioId", usuarioId);
+
         return "form-filme";
     }
 
     @PostMapping("/salvar")
     public String salvarFormulario(@ModelAttribute Filme filme) {
         service.salvar(filme);
-        return "redirect:/filmes";
+        return "redirect:/filmes?usuarioId=" + filme.getUsuarioId();
     }
 
     @GetMapping("/buscar/{id}")
@@ -42,15 +49,42 @@ public class FilmeController {
         return service.buscarPorId(id);
     }
 
-    @GetMapping("/api")
-    @ResponseBody
-    public List<Filme> listarApi() {
-        return service.listar();
+    @GetMapping("/buscar")
+    public String buscar(@RequestParam String titulo,
+                         @RequestParam Long usuarioId,
+                         Model model) {
+
+        model.addAttribute("filmes", service.buscarPorTituloPorUsuario(titulo, usuarioId));
+        model.addAttribute("usuarioId", usuarioId);
+
+        return "filmes";
     }
 
-    @DeleteMapping("/deletar/{id}")
+    @GetMapping("/api")
     @ResponseBody
-    public void deletar(@PathVariable Long id) {
+    public List<Filme> listarApi(@RequestParam Long usuarioId) {
+        return service.listarPorUsuario(usuarioId);
+    }
+
+    @GetMapping("/excluir/{id}")
+    public String excluir(@PathVariable Long id, @RequestParam Long usuarioId) {
         service.deletar(id);
+        return "redirect:/filmes?usuarioId=" + usuarioId;
+    }
+
+    @GetMapping("/editar/{id}")
+    public String editar(@PathVariable Long id, @RequestParam Long usuarioId, Model model) {
+        Filme filme = service.buscarPorId(id);
+
+        model.addAttribute("filme", filme);
+        model.addAttribute("usuarioId", usuarioId);
+
+        return "form-filme";
+    }
+
+    @PostMapping("/atualizar")
+    public String atualizar(@ModelAttribute Filme filme) {
+        service.atualizar(filme);
+        return "redirect:/filmes?usuarioId=" + filme.getUsuarioId();
     }
 }

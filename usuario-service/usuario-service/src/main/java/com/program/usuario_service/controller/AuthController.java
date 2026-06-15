@@ -3,6 +3,10 @@ package com.program.usuario_service.controller;
 import com.program.usuario_service.model.Usuario;
 import com.program.usuario_service.repository.UsuarioRepository;
 import com.program.usuario_service.service.EmailService;
+import com.program.usuario_service.service.S3UsuarioBackupService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,13 +20,16 @@ public class AuthController {
     private final UsuarioRepository usuarioRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final S3UsuarioBackupService s3UsuarioBackupService;
 
     public AuthController(UsuarioRepository usuarioRepository,
                           EmailService emailService,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder,
+                          S3UsuarioBackupService s3UsuarioBackupService) {
         this.usuarioRepository = usuarioRepository;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
+        this.s3UsuarioBackupService = s3UsuarioBackupService;
     }
 
     @GetMapping("/login")
@@ -37,7 +44,9 @@ public class AuthController {
     }
 
     @PostMapping("/cadastro")
-    public String processarCadastro(@ModelAttribute Usuario usuario, Model model) {
+    public String processarCadastro(@ModelAttribute Usuario usuario,
+                                    Model model,
+                                    HttpServletRequest request) {
 
         if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
             model.addAttribute("error", "Este email já está cadastrado!");
@@ -46,7 +55,27 @@ public class AuthController {
         }
 
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
-        usuarioRepository.save(usuario);
+
+        Usuario usuarioSalvo = usuarioRepository.save(usuario);
+
+        s3UsuarioBackupService.salvarBackupUsuario(usuarioSalvo);
+
+        try {
+            emailService.enviarEmail(
+                    usuarioSalvo.getEmail(),
+                    "Bem-vindo ao ScreenMatch",
+                    "Olá " + usuarioSalvo.getNome()
+            );
+        } catch (Exception e) {
+            System.out.println("Erro ao enviar email: " + e.getMessage());
+        }
+
+        SecurityContextHolder.clearContext();
+
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
 
         return "redirect:/login?cadastroSucesso";
     }
@@ -110,6 +139,7 @@ public class AuthController {
 
         return "redirect:/login?senhaAlterada";
     }
+
     @GetMapping("/home")
     public String home() {
         return "home";

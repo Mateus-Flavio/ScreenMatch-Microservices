@@ -11,6 +11,9 @@ public class Filme {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private Long usuarioId;
+
     @NotBlank(message = "titulo nao pode ser vazio")
     @Column
     private String titulo;
@@ -23,7 +26,6 @@ public class Filme {
     @Column
     private Integer ano;
 
-    @NotBlank(message = "descricao nao pode ser vazio")
     @Column(columnDefinition = "TEXT")
     private String descricao;
 
@@ -65,6 +67,14 @@ public class Filme {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public Long getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(Long usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
     @Override

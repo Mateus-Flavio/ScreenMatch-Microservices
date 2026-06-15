@@ -13,25 +13,35 @@ public class FilmeService {
     @Autowired
     private FilmeRepository repository;
 
-    public List<Filme> listar() {
-        return repository.findAll();
+    @Autowired
+    private S3BackupService s3BackupService;
+
+    public List<Filme> listarPorUsuario(Long usuarioId) {
+        return repository.findByUsuarioId(usuarioId);
     }
 
     public Filme salvar(Filme filme) {
-        return repository.save(filme);
+        Filme filmeSalvo = repository.save(filme);
+        s3BackupService.salvarBackupFilme(filmeSalvo);
+        return filmeSalvo;
     }
 
     public Filme atualizar(Filme filme) {
-        return repository.save(filme);
+        Filme filmeAtualizado = repository.save(filme);
+        s3BackupService.salvarBackupFilme(filmeAtualizado);
+        return filmeAtualizado;
     }
 
     public Filme buscarPorId(Long id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Filme não encontrado"));
+    }
+
+    public List<Filme> buscarPorTituloPorUsuario(String titulo, Long usuarioId) {
+        return repository.findByTituloContainingIgnoreCaseAndUsuarioId(titulo, usuarioId);
     }
 
     public void deletar(Long id) {
         repository.deleteById(id);
     }
-
-
 }

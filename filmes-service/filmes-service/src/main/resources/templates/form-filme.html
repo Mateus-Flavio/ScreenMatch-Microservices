@@ -20,31 +20,44 @@
 
             <form th:action="@{/filmes/salvar}" th:object="${filme}" method="post">
 
+                <input type="hidden" th:field="*{usuarioId}">
+
                 <div class="mb-3">
                     <label class="form-label">Título</label>
-                    <input type="text" th:field="*{titulo}" class="form-control" required>
+                    <input type="text"
+                           th:field="*{titulo}"
+                           class="form-control"
+                           required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Descrição</label>
-                    <textarea th:field="*{descricao}" class="form-control" rows="3"></textarea>
+                    <textarea th:field="*{descricao}"
+                              class="form-control"
+                              rows="3"></textarea>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Gênero</label>
-                    <input type="text" th:field="*{genero}" class="form-control" required>
+                    <input type="text"
+                           th:field="*{genero}"
+                           class="form-control"
+                           required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Ano</label>
-                    <input type="number" th:field="*{ano}" class="form-control" required>
+                    <input type="number"
+                           th:field="*{ano}"
+                           class="form-control"
+                           required>
                 </div>
 
                 <button type="submit" class="btn btn-success">
                     Salvar Filme
                 </button>
 
-                <a href="/filmes" class="btn btn-secondary">
+                <a th:href="@{/filmes(usuarioId=${filme.usuarioId})}" class="btn btn-secondary">
                     Voltar
                 </a>
 

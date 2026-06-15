@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: filmes-service
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: filmes-service
+
+  template:
+    metadata:
+      labels:
+        app: filmes-service
+
+    spec:
+      containers:
+        - name: filmes-service
+          image: filmes-service:latest
+
+          ports:
+            - containerPort: 8082
+
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+
+            - name: AWS_ACCESS_KEY_ID
+              value: "SUA-ACCESS-KEY"
+
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "SUA-SECRET-ACESS-KEY"
+
+            - name: AWS_REGION
+              value: "us-east-2"

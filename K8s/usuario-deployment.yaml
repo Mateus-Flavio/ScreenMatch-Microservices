@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: usuario-service
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: usuario-service
+
+  template:
+    metadata:
+      labels:
+        app: usuario-service
+
+    spec:
+      containers:
+        - name: usuario-service
+          image: usuario-service:latest
+
+          ports:
+            - containerPort: 8081
+
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+
+            - name: AWS_ACCESS_KEY_ID
+              value: "SUA-ACCESS-KEY-ID"
+
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "SUA-SECRET-ACCESS-KEY"
+
+            - name: AWS_REGION
+              value: "us-east-2"
